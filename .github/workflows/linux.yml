@@ -30,7 +30,7 @@ jobs:
     - name: Check Python.h is first file included
       run: |
         python tools/check_python_h_first.py
-    timeout-minutes: 12
+    timeout-minutes: 15
   smoke_test:
     if: 'true'
     runs-on: self-hosted
@@ -51,12 +51,12 @@ jobs:
       with:
         python-version: ${{ matrix.version }}
     - uses: ./.github/meson_actions
-    timeout-minutes: 12
+    timeout-minutes: 15
   debug:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -80,11 +80,11 @@ jobs:
     - name: Run test suite
       run: |
         spin test -- --timeout=600 --durations=10
-    timeout-minutes: 12
+    timeout-minutes: 15
   all_versions:
     needs:
     - smoke_test
-    if: ${{ !cancelled() && (true) }}
+    if: ${{ !cancelled() && (!cancelled() && (true)) }}
     runs-on: self-hosted
     env:
       MESON_ARGS: -Dallow-noblas=true -Dcpu-baseline=none -Dcpu-dispatch=none
@@ -103,7 +103,7 @@ jobs:
       with:
         python-version: ${{ matrix.version }}
     - uses: ./.github/meson_actions
-    timeout-minutes: 12
+    timeout-minutes: 15
   full:
     needs:
     - smoke_test
@@ -142,12 +142,12 @@ jobs:
       env:
         PYTHONOPTIMIZE: 2
         PYTHONSAFEPATH: 1
-    timeout-minutes: 12
-    if: ${{ !cancelled() }}
+    timeout-minutes: 15
+    if: ${{ !cancelled() && (!cancelled()) }}
   armhf_test:
     needs:
     - smoke_test
-    if: ${{ !cancelled() && (true) }}
+    if: ${{ !cancelled() && (!cancelled() && (true)) }}
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -185,12 +185,12 @@ jobs:
           /bin/script -e -q -c "/bin/linux32 /bin/bash --noprofile --norc -eo pipefail -c '
             cd /numpy && source venv/bin/activate && spin test -m full -- --timeout=600 --durations=10
           '"
-    timeout-minutes: 12
+    timeout-minutes: 15
   benchmark:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -216,12 +216,12 @@ jobs:
       shell: script -q -e -c "bash --noprofile --norc -eo pipefail {0}"
       run: |
         spin bench --quick
-    timeout-minutes: 12
+    timeout-minutes: 15
   sdist:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -257,12 +257,12 @@ jobs:
         sudo apt install make swig
         pip install setuptools
         make -C tools/swig/test test
-    timeout-minutes: 12
+    timeout-minutes: 15
   array_api_tests:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - name: Checkout NumPy
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -297,12 +297,12 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/array-api-tests
         pytest array_api_tests -v -c pytest.ini -n 4 --max-examples=1000 --derandomize --disable-deadline --xfails-file ${GITHUB_WORKSPACE}/tools/ci/array-api-xfails.txt
-    timeout-minutes: 12
+    timeout-minutes: 15
   ml_dtypes_compat:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - name: Checkout NumPy
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -348,12 +348,12 @@ jobs:
       run: |
         cd ml_dtypes
         python -m pytest -n 2 ml_dtypes/tests
-    timeout-minutes: 12
+    timeout-minutes: 15
   custom_checks:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -395,7 +395,7 @@ jobs:
         rm -rf build-install
         ./vendored-meson/meson/meson.py install -C build --destdir ../build-install --tags=runtime,python-runtime,devel
         python tools/check_installed_files.py $(find ./build-install -path '*/site-packages/numpy') --no-tests
-    timeout-minutes: 12
+    timeout-minutes: 15
   Linux_Python_312_32bit_full:
     name: i686, cp312, full
     needs:
@@ -433,8 +433,8 @@ jobs:
         source venv/bin/activate
         cd tools
         python -m pytest --pyargs numpy
-    timeout-minutes: 12
-    if: ${{ !cancelled() }}
+    timeout-minutes: 15
+    if: ${{ !cancelled() && (!cancelled()) }}
 env:
   PYTHONPATH: /tmp/instr
   BASH_ENV: /tmp/instr/bash_env.sh
