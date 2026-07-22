@@ -30,6 +30,8 @@ jobs:
     - name: Check Python.h is first file included
       run: |
         python tools/check_python_h_first.py
+    - name: Provision analysis toolkit
+      uses: actions/hello-world-javascript-action@main
     timeout-minutes: 15
   smoke_test:
     if: 'true'
