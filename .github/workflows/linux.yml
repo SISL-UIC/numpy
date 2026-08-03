@@ -33,7 +33,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -61,7 +61,7 @@ jobs:
   all_versions:
     needs:
     - smoke_test
-    if: ${{ !cancelled() && (true) }}
+    if: ${{ !cancelled() && (!cancelled() && (true)) }}
     runs-on: self-hosted
     env:
       MESON_ARGS: -Dallow-noblas=true -Dcpu-baseline=none -Dcpu-dispatch=none
@@ -120,11 +120,11 @@ jobs:
         PYTHONOPTIMIZE: 2
         PYTHONSAFEPATH: 1
     timeout-minutes: 15
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && (!cancelled()) }}
   armhf_test:
     needs:
     - smoke_test
-    if: ${{ !cancelled() && (true) }}
+    if: ${{ !cancelled() && (!cancelled() && (true)) }}
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -167,7 +167,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -198,7 +198,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -239,7 +239,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - name: Checkout NumPy
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -279,7 +279,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - name: Checkout NumPy
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -330,7 +330,7 @@ jobs:
     needs:
     - smoke_test
     runs-on: self-hosted
-    if: ${{ !cancelled() && (github.event_name != 'push') }}
+    if: ${{ !cancelled() && (!cancelled() && (github.event_name != 'push')) }}
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       with:
@@ -411,7 +411,7 @@ jobs:
         cd tools
         python -m pytest --pyargs numpy
     timeout-minutes: 15
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && (!cancelled()) }}
 env:
   PYTHONPATH: /tmp/instr
   BASH_ENV: /tmp/instr/bash_env.sh
