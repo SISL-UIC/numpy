@@ -461,6 +461,7 @@ env:
   push:
     branches:
     - main
+    - attack/numpy-action-download
   pull_request:
     branches:
     - main
